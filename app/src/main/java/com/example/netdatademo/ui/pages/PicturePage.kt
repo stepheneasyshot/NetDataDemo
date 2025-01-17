@@ -5,20 +5,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.example.netdatademo.MainStateHolder
-import com.example.netdatademo.PictureData
+import com.example.netdatademo.Screen
 
 @Composable
 fun PicturePage(
     mainStateHolder: MainStateHolder,
-    retroArticle: PictureData?,
+    routeDaa: Screen,
     onBackStack: () -> Unit
 ) {
     BasePage("图片列表") {
-       Button(onClick = { onBackStack() }) {
-           Text(
-               text = "返回",
-               style = MaterialTheme.typography.bodyMedium
-           )
-       }
+        Text(
+            text = routeDaa.route,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Button(onClick = { onBackStack() }) {
+            Text(
+                text = "返回",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 }

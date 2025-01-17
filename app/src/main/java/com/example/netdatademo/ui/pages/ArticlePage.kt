@@ -11,13 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.example.netdatademo.MainStateHolder
-import com.example.netdatademo.ArticleData
+import com.example.netdatademo.Screen
 
 
 @Composable
 fun ArticlePage(
     mainStateHolder: MainStateHolder,
-    retroArticle: ArticleData?,
+    retroArticle: Screen,
     onBackStack: () -> Unit
 ) {
     BasePage("文章列表") {
@@ -26,6 +26,8 @@ fun ArticlePage(
         LaunchedEffect(Unit) {
             mainStateHolder.getArticleList(0)
         }
+
+        Text(text = retroArticle.route, style = MaterialTheme.typography.bodyMedium)
 
         Button(onClick = { onBackStack() }) {
             // 填入官方的返回图标
@@ -39,7 +41,7 @@ fun ArticlePage(
             items(articleData.value.articleList) { it ->
                 Text(
                     text = it.title,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }

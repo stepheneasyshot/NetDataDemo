@@ -49,38 +49,45 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
             .fillMaxSize()
     ) {
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = MainPageObject("initial page")) {
-            composable<MainPageObject> {
-                MainPage { clazz ->
-                    when (clazz) {
-                        ArticleData::class.java -> {
-                            navController.navigate(ArticleData())
+        NavHost(
+            navController = navController,
+            startDestination = Screen.MainPage
+        ) {
+            composable<Screen.MainPage> {
+                MainPage { screen ->
+                    when (screen) {
+                        is Screen.ArticlePage -> {
+                            navController.navigate(Screen.ArticlePage)
                         }
 
-                        ElseData::class.java -> {
-                            navController.navigate(ElseData())
+                        is Screen.PicturePage -> {
+                            navController.navigate(Screen.PicturePage)
                         }
 
-                        PictureData::class.java -> {
-                            navController.navigate(PictureData())
+                        is Screen.ElsePage -> {
+                            navController.navigate(Screen.ElsePage)
+                        }
+
+                        else -> {
+                            navController.navigate(Screen.MainPage)
                         }
                     }
                 }
             }
-            composable<ArticleData> { backSackEntry ->
-                val article = backSackEntry.toRoute<ArticleData>()
+            composable<Screen.ArticlePage> { backSackEntry ->
+                val article = backSackEntry.toRoute<Screen.ArticlePage>()
                 ArticlePage(mainStateHolder, article) {
                     navController.popBackStack()
                 }
             }
-            composable<PictureData> { backSackEntry ->
-                val picture = backSackEntry.toRoute<PictureData>()
+            composable<Screen.PicturePage> { backSackEntry ->
+                val picture = backSackEntry.toRoute<Screen.PicturePage>()
                 PicturePage(mainStateHolder, picture) {
                     navController.popBackStack()
                 }
             }
-            composable<ElseData> { backSackEntry ->
-                val elseData = backSackEntry.toRoute<ElseData>()
+            composable<Screen.ElsePage> { backSackEntry ->
+                val elseData = backSackEntry.toRoute<Screen.ElsePage>()
                 ElsePage(mainStateHolder, elseData) {
                     navController.popBackStack()
                 }
@@ -90,14 +97,16 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
 }
 
 @Serializable
-data class MainPageObject(val data: String? = null)
+sealed class Screen(val route: String) {
+    @Serializable
+    object MainPage : Screen("mainPage")
 
-@Serializable
-data class ArticleData(val data: String? = null)
+    @Serializable
+    object ArticlePage : Screen("articlePage")
 
-@Serializable
-data class PictureData(val data: String? = null)
+    @Serializable
+    object PicturePage : Screen("picturePage")
 
-@Serializable
-data class ElseData(val data: String? = null)
-
+    @Serializable
+    object ElsePage : Screen("elsePage")
+}
