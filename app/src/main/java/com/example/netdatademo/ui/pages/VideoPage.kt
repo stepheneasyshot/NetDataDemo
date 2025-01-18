@@ -20,14 +20,14 @@ fun VideoPage(
     videoData: Screen,
     onBackStack: () -> Unit
 ) {
-    BasePage(title = "视频页",onCickBack = onBackStack) {
+    BasePage(title = "视频页", onCickBack = onBackStack) {
         Column {
             Text(text = videoData.route, style = MaterialTheme.typography.bodyMedium)
 
             val context = LocalContext.current
             val exoPlayer = remember {
-               ExoPlayer.Builder(context).build().apply {
-                    val mediaItem = MediaItem.fromUri("https://vod.api.video/vod/viXCshSBWtwMb3pcFUc8mmd/mp4/source.mp4")
+                ExoPlayer.Builder(context).build().apply {
+                    val mediaItem = MediaItem.fromUri(mainStateHolder.getVideoUrl())
                     setMediaItem(mediaItem)
                     prepare()
                 }

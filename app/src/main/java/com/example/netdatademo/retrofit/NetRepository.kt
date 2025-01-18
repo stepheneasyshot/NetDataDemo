@@ -6,20 +6,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.json.JSONObject
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
 
-const val wananDroidUrl = "https://www.wanandroid.com/"
-
-const val catApiUrl = "https://api.thecatapi.com/"
 
 class RetroService {
+
+    companion object {
+        const val wananDroidUrl = "https://www.wanandroid.com/"
+
+        const val catApiUrl = "https://api.thecatapi.com/"
+    }
 
     val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY // 设置日志级别为BODY，显示请求和响应的正文
@@ -27,6 +24,7 @@ class RetroService {
 
     val client = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(AuthInterceptor())
         .cookieJar(LoginCookieJar())
         .build()
 
@@ -42,13 +40,13 @@ class RetroService {
         .build()
 
 
-    private val wanAndroiAapi: WanAndroidRepository =
-        wananDroidRetrofit.create(WanAndroidRepository::class.java)
+    private val wanAndroiAapi: WanAndroidApi =
+        wananDroidRetrofit.create(WanAndroidApi::class.java)
 
     private val catApi: CatApi = catApiRetrofit.create(CatApi::class.java)
 
     suspend fun getArticleList(page: Int) = withContext(Dispatchers.IO) {
-        val response = wanAndroiAapi.getArticleList(page).execute()
+        val response = wanAndroiAapi.getMainPageArticleList(page).execute()
         response.body()?.data?.datas ?: listOf()
     }
 
@@ -61,35 +59,27 @@ class RetroService {
         val response = wanAndroiAapi.login(username, password).execute()
         if (response.isSuccessful) {
             val cookies = response.headers().values("Set-Cookie")
+            var token = ""
             for (cookie in cookies) {
                 Log.i("loginWanAndroid -> Received Cookie:", cookie)
+                if (cookie.contains("token_pass")) {
+                    token = cookie.split(";")[0].split("=")[1]
+                    Log.i("loginWanAndroid -> token:", token)
+                }
             }
             val body = response.body()
             Log.i("loginWanAndroid -> Response Body:", body.toString())
-            // 验证登录是否成功
-            body?.data?.username ?: ""
+            // 返回token和用户名
+            Pair(token, body?.data?.username ?: "")
         } else {
             // 登录失败
             Log.e("loginWanAndroid -> Error:", response.message())
-            ""
+            null
         }
     }
+
+    suspend fun getCollectArticleList() = withContext(Dispatchers.IO) {
+        val response = wanAndroiAapi.getLoginArticleList().execute()
+        response.body()?.data?.datas?: listOf()
+    }
 }
-
-interface WanAndroidRepository {
-    @GET("article/list/{page}/json")
-    fun getArticleList(@Path("page") page: Int): Call<Article>
-
-    @POST("user/login")
-    fun login(
-        @Query("username") username: String,
-        @Query("password") password: String
-    ): Call<LoginBean>
-}
-
-
-interface CatApi {
-    @GET("v1/images/search?limit=10")
-    fun getCatPic(): Call<PicAdress>
-}
-

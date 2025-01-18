@@ -2,6 +2,7 @@ package com.example.netdatademo
 
 import android.app.Application
 import com.example.netdatademo.di.koinModule
+import com.example.netdatademo.helper.DataStoreHelper
 import org.koin.core.context.startKoin
 
 class NetDemoApplication : Application() {
@@ -19,6 +20,7 @@ class NetDemoApplication : Application() {
         startKoin {
             modules(koinModule)
         }
+        DataStoreHelper.init(appContext)
     }
 }
 

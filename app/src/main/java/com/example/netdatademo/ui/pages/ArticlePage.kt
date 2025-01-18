@@ -1,10 +1,8 @@
 package com.example.netdatademo.ui.pages
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,12 +31,18 @@ fun ArticlePage(
 ) {
     BasePage("文章列表", onCickBack = onBackStack) {
         val articleData = mainStateHolder.articleListStateFlow.collectAsState()
+        val collectedArticleData = mainStateHolder.collectedArticleListStateFlow.collectAsState()
         val userName = mainStateHolder.userStateFlow.collectAsState()
 
+        val testUserName = "zhanfeng"
+        val testPassword = "abcd1234@"
+
         LaunchedEffect(Unit) {
-            mainStateHolder.getArticleList(0)
-            mainStateHolder.loginWanAndroid()
+            mainStateHolder.getMainPageArticleList(0)
+            mainStateHolder.getCollectedArticleList()
+            mainStateHolder.loginWanAndroid(testUserName, testPassword)
         }
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Filled.AccountCircle, contentDescription = "AccountCircle")
             Text(text = userName.value.userName.ifEmpty {
@@ -58,9 +62,9 @@ fun ArticlePage(
                 modifier = Modifier
                     .fillMaxWidth(1f)
             ) {
-                items(listOf<String>("assasv测试", "sevgwebw测试", "sefvgwebew测试")) {
+                items(collectedArticleData.value.articleList) {
                     Text(
-                        text = it,
+                        text = it.title,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier
