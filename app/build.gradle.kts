@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.retrofit2)
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.gson)
+    implementation(libs.okhttp.logging.interceptor)
 
     // koin
     implementation(libs.koin.android)

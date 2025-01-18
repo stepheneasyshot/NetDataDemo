@@ -30,7 +30,7 @@ fun BasePage(title: String, onCickBack: () -> Unit, content: @Composable () -> U
         ) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "logo",
+                contentDescription = "back",
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .clip(RoundedCornerShape(10))

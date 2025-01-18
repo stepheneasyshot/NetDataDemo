@@ -1,12 +1,12 @@
 package com.example.netdatademo.retrofit
 
 data class Article(
-    val `data`: Data,
+    val `data`: ArticleListData,
     val errorCode: Int,
     val errorMsg: String
 )
 
-data class Data(
+data class ArticleListData(
     val curPage: Int,
     val datas: List<DataX>,
     val offset: Int,
