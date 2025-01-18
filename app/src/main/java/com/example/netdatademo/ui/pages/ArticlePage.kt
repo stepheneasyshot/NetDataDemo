@@ -56,6 +56,13 @@ fun ArticlePage(
                 }, style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
+            if (userName.value.userName.isNotEmpty()) {
+                Button(onClick = {
+                    mainStateHolder.logoutWanAndroid()
+                }) {
+                    Text(text = "退出登录", style = MaterialTheme.typography.bodyLarge)
+                }
+            }
         }
 
         if (userName.value.userName.isNotEmpty()) {

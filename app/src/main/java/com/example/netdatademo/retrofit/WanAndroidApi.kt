@@ -1,5 +1,6 @@
 package com.example.netdatademo.retrofit
 
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -21,4 +22,9 @@ interface WanAndroidApi {
     // 获取登陆后的文章列表
     @GET("lg/collect/list/0/json")
     fun getLoginArticleList(): Call<CollectedArticle>
+
+//    https://www.wanandroid.com/user/logout/json
+    // 退出登录
+    @GET("user/logout/json")
+    fun logout(): Call<LogoutBean>
 }

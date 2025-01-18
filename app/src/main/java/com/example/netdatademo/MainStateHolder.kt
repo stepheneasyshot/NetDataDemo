@@ -89,6 +89,32 @@ class MainStateHolder(private val retroService: RetroService) : ViewModel() {
     }
 
     /**
+     * 退出登录
+     */
+    fun logoutWanAndroid() {
+        CoroutineScope(Dispatchers.IO).launch {
+            // 先判断本地是否已经登录过
+            if (DataStoreHelper.getData(stringPreferencesKey(TOKEN_KEY), "").isNotEmpty()) {
+                // 本地已经登录过，调用退出登录接口
+               val tokenUserPair= retroService.logoutWanAndroid()
+                Log.d(TAG, "logoutWanAndroid: ${tokenUserPair?.first}, ${tokenUserPair?.second}")
+                tokenUserPair?.let {
+                    // 退出登录成功，清除token和用户名
+                    DataStoreHelper.saveData(stringPreferencesKey(TOKEN_KEY), "")
+                    DataStoreHelper.saveData(stringPreferencesKey(USER_NAME_KEY), "")
+                    // 更新状态
+                    userState.update {
+                        it.copy(
+                            userName = "",
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * 收藏文章列表
      */
     fun getCollectedArticleList() {

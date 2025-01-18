@@ -80,6 +80,29 @@ class RetroService {
 
     suspend fun getCollectArticleList() = withContext(Dispatchers.IO) {
         val response = wanAndroiAapi.getLoginArticleList().execute()
-        response.body()?.data?.datas?: listOf()
+        response.body()?.data?.datas ?: listOf()
+    }
+
+    suspend fun logoutWanAndroid() = withContext(Dispatchers.IO) {
+        val response = wanAndroiAapi.logout().execute()
+        if (response.isSuccessful) {
+            Log.i("logoutWanAndroid -> Response Body:", response.body().toString())
+            val cookies = response.headers().values("Set-Cookie")
+            var token = ""
+            for (cookie in cookies) {
+                Log.i("loginWanAndroid -> Received Cookie:", cookie)
+                if (cookie.contains("token_pass")) {
+                    token = cookie.split(";")[0].split("=")[1]
+                    Log.i("loginWanAndroid -> token:", token)
+                }
+            }
+            val body = response.body()
+            Log.i("loginWanAndroid -> Response Body:", body.toString())
+            // 返回token和用户名
+            Pair(token, body?.data?.username ?: "")
+        } else {
+            Log.e("logoutWanAndroid -> Error:", response.message())
+            null
+        }
     }
 }
