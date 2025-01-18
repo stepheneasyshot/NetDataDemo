@@ -70,4 +70,9 @@ dependencies {
 
     // koin
     implementation(libs.koin.android)
+
+    // coil
+    implementation(libs.coil)
+    implementation(libs.coil.okhttp)
+
 }

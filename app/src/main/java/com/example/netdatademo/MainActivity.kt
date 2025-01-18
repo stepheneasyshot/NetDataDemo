@@ -99,14 +99,14 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
 @Serializable
 sealed class Screen(val route: String) {
     @Serializable
-    object MainPage : Screen("mainPage")
+    data object MainPage : Screen("mainPage")
 
     @Serializable
-    object ArticlePage : Screen("articlePage")
+    data object ArticlePage : Screen("articlePage")
 
     @Serializable
-    object PicturePage : Screen("picturePage")
+    data object PicturePage : Screen("picturePage")
 
     @Serializable
-    object ElsePage : Screen("elsePage")
+    data object ElsePage : Screen("elsePage")
 }

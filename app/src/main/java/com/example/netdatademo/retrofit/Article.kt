@@ -1,18 +1,5 @@
 package com.example.netdatademo.retrofit
 
-
-data class ArticleState(
-    val articleList: List<DataX> = listOf(),
-    val isLoading: Boolean = true,
-    val error: String? = null
-) {
-    fun toUiState() = ArticleState(
-        articleList = articleList,
-        isLoading = isLoading,
-        error = error
-    )
-}
-
 data class Article(
     val `data`: Data,
     val errorCode: Int,
