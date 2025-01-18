@@ -11,15 +11,15 @@ fun MainPage(onNavigateTo: (Screen) -> Unit) {
     BasePage("导航页") {
 
         Button(onClick = { onNavigateTo(Screen.ArticlePage) }) {
-            Text(text = "go to RetroArticle", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "玩安卓首页文章列表", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Button(onClick = { onNavigateTo(Screen.ElsePage) }) {
-            Text(text = "go to RetorElse", style = MaterialTheme.typography.bodyMedium)
+        Button(onClick = { onNavigateTo(Screen.VideoPage) }) {
+            Text(text = "播放在线视频", style = MaterialTheme.typography.bodyMedium)
         }
 
         Button(onClick = { onNavigateTo(Screen.PicturePage) }) {
-            Text(text = "go to Picture", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "显示在线猫猫图片", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

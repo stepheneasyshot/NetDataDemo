@@ -17,9 +17,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.netdatademo.ui.pages.ArticlePage
-import com.example.netdatademo.ui.pages.ElsePage
 import com.example.netdatademo.ui.pages.MainPage
 import com.example.netdatademo.ui.pages.PicturePage
+import com.example.netdatademo.ui.pages.VideoPage
 import com.example.netdatademo.ui.theme.NetDataDemoTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -64,8 +64,8 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
                             navController.navigate(Screen.PicturePage)
                         }
 
-                        is Screen.ElsePage -> {
-                            navController.navigate(Screen.ElsePage)
+                        is Screen.VideoPage -> {
+                            navController.navigate(Screen.VideoPage)
                         }
 
                         else -> {
@@ -86,9 +86,9 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
                     navController.popBackStack()
                 }
             }
-            composable<Screen.ElsePage> { backSackEntry ->
-                val elseData = backSackEntry.toRoute<Screen.ElsePage>()
-                ElsePage(mainStateHolder, elseData) {
+            composable<Screen.VideoPage> { backSackEntry ->
+                val videoPage = backSackEntry.toRoute<Screen.VideoPage>()
+                VideoPage(mainStateHolder, videoPage) {
                     navController.popBackStack()
                 }
             }
@@ -108,5 +108,5 @@ sealed class Screen(val route: String) {
     data object PicturePage : Screen("picturePage")
 
     @Serializable
-    data object ElsePage : Screen("elsePage")
+    data object VideoPage : Screen("videoPage")
 }
