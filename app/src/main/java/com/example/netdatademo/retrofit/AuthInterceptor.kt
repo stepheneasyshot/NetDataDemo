@@ -1,6 +1,5 @@
 package com.example.netdatademo.retrofit
 
-import android.util.Log
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.netdatademo.MainStateHolder.Companion.TOKEN_KEY
 import com.example.netdatademo.helper.DataStoreHelper
@@ -19,7 +18,6 @@ class AuthInterceptor() : Interceptor {
                 .addHeader("Cookie", "loginUserName=zhanfeng")
                 .addHeader("Cookie", "loginUserPassword=abcd1234@")
                 .build()
-            Log.d("AuthInterceptor", "intercept: $newRequest")
             return chain.proceed(newRequest)
         }
 

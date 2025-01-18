@@ -88,6 +88,9 @@ class MainStateHolder(private val retroService: RetroService) : ViewModel() {
         }
     }
 
+    /**
+     * 收藏文章列表
+     */
     fun getCollectedArticleList() {
         CoroutineScope(Dispatchers.IO).launch {
             collectedArticleState.update {
@@ -102,6 +105,9 @@ class MainStateHolder(private val retroService: RetroService) : ViewModel() {
         }
     }
 
+    /**
+     * 获取猫猫图片
+     */
     fun getCatPic() {
         CoroutineScope(Dispatchers.IO).launch {
             pitureState.update {

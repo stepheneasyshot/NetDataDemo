@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,15 +40,22 @@ fun ArticlePage(
 
         LaunchedEffect(Unit) {
             mainStateHolder.getMainPageArticleList(0)
-            mainStateHolder.getCollectedArticleList()
             mainStateHolder.loginWanAndroid(testUserName, testPassword)
+        }
+
+        // 每次当用户名变化之后，重新获取收藏文章列表
+        LaunchedEffect(userName.value.userName) {
+            mainStateHolder.getCollectedArticleList()
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Filled.AccountCircle, contentDescription = "AccountCircle")
-            Text(text = userName.value.userName.ifEmpty {
-                "未登录"
-            }, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = userName.value.userName.ifEmpty {
+                    "未登录"
+                }, style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
         }
 
         if (userName.value.userName.isNotEmpty()) {
