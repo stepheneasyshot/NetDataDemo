@@ -1,7 +1,6 @@
 package com.example.netdatademo.ui.pages
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +20,9 @@ fun VideoPage(
     videoData: Screen,
     onBackStack: () -> Unit
 ) {
-    BasePage(title = "视频页") {
+    BasePage(title = "视频页",onCickBack = onBackStack) {
         Column {
             Text(text = videoData.route, style = MaterialTheme.typography.bodyMedium)
-            Button(onClick = { onBackStack() }) {
-                Text(text = "VideoPage Content Text")
-            }
 
             val context = LocalContext.current
             val exoPlayer = remember {

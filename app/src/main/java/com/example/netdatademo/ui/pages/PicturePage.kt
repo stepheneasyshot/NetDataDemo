@@ -21,7 +21,7 @@ fun PicturePage(
     routeDaa: Screen,
     onBackStack: () -> Unit
 ) {
-    BasePage("图片列表") {
+    BasePage("图片列表", onCickBack = onBackStack) {
 
         LaunchedEffect(Unit) {
             mainStateHolder.getCatPic()
@@ -33,12 +33,6 @@ fun PicturePage(
             text = routeDaa.route,
             style = MaterialTheme.typography.bodyMedium
         )
-        Button(onClick = { onBackStack() }) {
-            Text(
-                text = "返回",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
 
         LazyColumn {
             item {

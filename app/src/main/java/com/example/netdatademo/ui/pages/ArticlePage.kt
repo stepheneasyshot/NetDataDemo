@@ -20,7 +20,7 @@ fun ArticlePage(
     retroArticle: Screen,
     onBackStack: () -> Unit
 ) {
-    BasePage("文章列表") {
+    BasePage("文章列表", onCickBack = onBackStack) {
         val articleData = mainStateHolder.articleListStateFlow.collectAsState()
 
         LaunchedEffect(Unit) {
@@ -28,11 +28,6 @@ fun ArticlePage(
         }
 
         Text(text = retroArticle.route, style = MaterialTheme.typography.bodyMedium)
-
-        Button(onClick = { onBackStack() }) {
-            // 填入官方的返回图标
-            Text(text = "返回", style = MaterialTheme.typography.bodyMedium)
-        }
 
         LazyColumn(
             modifier = Modifier
