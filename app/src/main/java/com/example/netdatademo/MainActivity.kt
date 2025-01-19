@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.netdatademo.ui.pages.ArticlePage
+import com.example.netdatademo.ui.pages.GithubRepoPage
 import com.example.netdatademo.ui.pages.MainPage
 import com.example.netdatademo.ui.pages.PicturePage
 import com.example.netdatademo.ui.pages.PicturePageKtor
@@ -73,6 +74,10 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
                             navController.navigate(Screen.VideoPage)
                         }
 
+                        is Screen.GithubReposPage -> {
+                            navController.navigate(Screen.GithubReposPage)
+                        }
+
                         else -> {
                             navController.navigate(Screen.MainPage)
                         }
@@ -103,6 +108,11 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
                     navController.popBackStack()
                 }
             }
+            composable<Screen.GithubReposPage> {
+                GithubRepoPage(mainStateHolder) {
+                    navController.popBackStack()
+                }
+            }
         }
     }
 }
@@ -123,4 +133,7 @@ sealed class Screen(val route: String) {
 
     @Serializable
     data object VideoPage : Screen("videoPage")
+
+    @Serializable
+    data object GithubReposPage : Screen("githubReposPage")
 }

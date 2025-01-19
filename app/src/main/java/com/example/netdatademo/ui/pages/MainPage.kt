@@ -49,6 +49,13 @@ fun MainPage(onNavigateTo: (Screen) -> Unit) {
             ) {
                 Text(text = "显示在线猫猫图片（Ktor）", style = MaterialTheme.typography.bodyMedium)
             }
+
+            Button(
+                onClick = { onNavigateTo(Screen.GithubReposPage) },
+                modifier = Modifier.padding(vertical = 10.dp)
+            ){
+                Text(text = "Github仓库列表（Ktor）", style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }

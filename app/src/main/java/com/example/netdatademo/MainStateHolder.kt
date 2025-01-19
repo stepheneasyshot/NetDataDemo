@@ -10,6 +10,7 @@ import com.example.netdatademo.retrofit.PicAdressItem
 import com.example.netdatademo.retrofit.RetroService
 import com.example.netdatademo.uistate.ArticleState
 import com.example.netdatademo.uistate.CollectedArticleState
+import com.example.netdatademo.uistate.GithubReposState
 import com.example.netdatademo.uistate.PitureState
 import com.example.netdatademo.uistate.UserState
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +33,9 @@ class MainStateHolder(
 
     private val articleState = MutableStateFlow(ArticleState())
     val articleListStateFlow = articleState.asStateFlow()
+
+    private val githubReposSate = MutableStateFlow(GithubReposState())
+    val githubReposListStateFlow = githubReposSate.asStateFlow()
 
     private val collectedArticleState = MutableStateFlow(CollectedArticleState())
     val collectedArticleListStateFlow = collectedArticleState.asStateFlow()
@@ -179,6 +183,20 @@ class MainStateHolder(
                     isLoading = false
                 )
             }
+        }
+    }
+
+    fun getGithubRepos(userName: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            val repos = ktorClient.getGithubRepos(userName)
+            Log.d(TAG, "getMyGithubRepos: $repos")
+            githubReposSate.update {
+                it.copy(
+                    repos = repos,
+                    isLoading = false
+                )
+            }
+            githubReposSate.value = githubReposSate.value.toUiState()
         }
     }
 

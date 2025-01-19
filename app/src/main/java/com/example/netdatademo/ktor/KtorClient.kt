@@ -1,6 +1,5 @@
 package com.example.netdatademo.ktor
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -32,11 +31,13 @@ class KtorClient {
     }
 
     suspend fun getCatPicture() = withContext(Dispatchers.IO) {
-        val data =
-            client.get("https://api.thecatapi.com/v1/images/search?limit=10")
-                .body<List<PicKtorItem>>()
-        Log.i(TAG, "getCatPicture->  $data")
-        data
+        client.get("https://api.thecatapi.com/v1/images/search?limit=10")
+            .body<List<PicKtorItem>>()
+    }
+
+    suspend fun getGithubRepos(userName: String) = withContext(Dispatchers.IO) {
+        client.get("https://api.github.com/users/${userName}/repos")
+            .body<List<GithubRepoItem>>()
     }
 
     fun release() {
