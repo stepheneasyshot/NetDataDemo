@@ -4,8 +4,9 @@ import android.util.Log
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import com.example.netdatademo.helper.DataStoreHelper
-import com.example.netdatademo.retrofit.CollectedArticle
+import com.example.netdatademo.ktor.KtorClient
 import com.example.netdatademo.retrofit.PicAdress
+import com.example.netdatademo.retrofit.PicAdressItem
 import com.example.netdatademo.retrofit.RetroService
 import com.example.netdatademo.uistate.ArticleState
 import com.example.netdatademo.uistate.CollectedArticleState
@@ -18,7 +19,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainStateHolder(private val retroService: RetroService) : ViewModel() {
+class MainStateHolder(
+    private val retroService: RetroService,
+    private val ktorClient: KtorClient
+) : ViewModel() {
 
     companion object {
         const val TAG = "MainStateHolder"
@@ -96,7 +100,7 @@ class MainStateHolder(private val retroService: RetroService) : ViewModel() {
             // 先判断本地是否已经登录过
             if (DataStoreHelper.getData(stringPreferencesKey(TOKEN_KEY), "").isNotEmpty()) {
                 // 本地已经登录过，调用退出登录接口
-               val tokenUserPair= retroService.logoutWanAndroid()
+                val tokenUserPair = retroService.logoutWanAndroid()
                 Log.d(TAG, "logoutWanAndroid: ${tokenUserPair?.first}, ${tokenUserPair?.second}")
                 tokenUserPair?.let {
                     // 退出登录成功，清除token和用户名
@@ -145,5 +149,42 @@ class MainStateHolder(private val retroService: RetroService) : ViewModel() {
         }
     }
 
+
     fun getVideoUrl() = "https://vod.api.video/vod/viXCshSBWtwMb3pcFUc8mmd/mp4/source.mp4"
+
+//    ===============================================  ktor  ====================================================
+
+    /**
+     * 获取猫猫图片 Ktor写法
+     */
+    fun getCatPicByKtor() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val catKtorItem = ktorClient.getCatPicture()
+            val transferList = PicAdress()
+            catKtorItem.let {
+                it.forEach { item ->
+                    transferList.add(
+                        PicAdressItem(
+                            url = item.url,
+                            width = item.width,
+                            height = item.height,
+                            id = item.id
+                        )
+                    )
+                }
+            }
+            pitureState.update {
+                it.copy(
+                    picAdress = transferList,
+                    isLoading = false
+                )
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        ktorClient.release()
+    }
+
 }

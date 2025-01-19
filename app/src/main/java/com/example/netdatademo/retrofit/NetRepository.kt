@@ -13,29 +13,29 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetroService {
 
     companion object {
-        const val wananDroidUrl = "https://www.wanandroid.com/"
+        const val WAN_ANDROID_BASE_URL = "https://www.wanandroid.com/"
 
-        const val catApiUrl = "https://api.thecatapi.com/"
+        const val CAT_API_BASE_URL = "https://api.thecatapi.com/"
     }
 
-    val loggingInterceptor = HttpLoggingInterceptor().apply {
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY // 设置日志级别为BODY，显示请求和响应的正文
     }
 
-    val client = OkHttpClient.Builder()
+    private val client = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor(AuthInterceptor())
         .cookieJar(LoginCookieJar())
         .build()
 
     private val wananDroidRetrofit = Retrofit.Builder()
-        .baseUrl(wananDroidUrl)
+        .baseUrl(WAN_ANDROID_BASE_URL)
         .client(client)
         .addConverterFactory(GsonConverterFactory.create(Gson()))
         .build()
 
     private val catApiRetrofit = Retrofit.Builder()
-        .baseUrl(catApiUrl)
+        .baseUrl(CAT_API_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create(Gson()))
         .build()
 

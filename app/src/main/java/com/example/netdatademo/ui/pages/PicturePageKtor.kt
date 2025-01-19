@@ -3,7 +3,6 @@ package com.example.netdatademo.ui.pages
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,15 +15,15 @@ import com.example.netdatademo.Screen
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PicturePage(
+fun PicturePageKtor(
     mainStateHolder: MainStateHolder,
     routeDaa: Screen,
     onBackStack: () -> Unit
 ) {
-    BasePage("图片列表", onCickBack = onBackStack) {
+    BasePage("图片列表(Ktor)", onCickBack = onBackStack) {
 
         LaunchedEffect(Unit) {
-            mainStateHolder.getCatPic()
+            mainStateHolder.getCatPicByKtor()
         }
 
         val pitureList = mainStateHolder.pitureListStateFlow.collectAsState().value

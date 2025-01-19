@@ -19,6 +19,7 @@ import androidx.navigation.toRoute
 import com.example.netdatademo.ui.pages.ArticlePage
 import com.example.netdatademo.ui.pages.MainPage
 import com.example.netdatademo.ui.pages.PicturePage
+import com.example.netdatademo.ui.pages.PicturePageKtor
 import com.example.netdatademo.ui.pages.VideoPage
 import com.example.netdatademo.ui.theme.NetDataDemoTheme
 import kotlinx.serialization.Serializable
@@ -64,6 +65,10 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
                             navController.navigate(Screen.PicturePage)
                         }
 
+                        is Screen.PicturePageKtor -> {
+                            navController.navigate(Screen.PicturePageKtor)
+                        }
+
                         is Screen.VideoPage -> {
                             navController.navigate(Screen.VideoPage)
                         }
@@ -83,6 +88,12 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
             composable<Screen.PicturePage> { backSackEntry ->
                 val picture = backSackEntry.toRoute<Screen.PicturePage>()
                 PicturePage(mainStateHolder, picture) {
+                    navController.popBackStack()
+                }
+            }
+            composable<Screen.PicturePageKtor> { backSackEntry ->
+                val picture = backSackEntry.toRoute<Screen.PicturePageKtor>()
+                PicturePageKtor(mainStateHolder, picture) {
                     navController.popBackStack()
                 }
             }
@@ -106,6 +117,9 @@ sealed class Screen(val route: String) {
 
     @Serializable
     data object PicturePage : Screen("picturePage")
+
+    @Serializable
+    data object PicturePageKtor : Screen("picturePageKtor")
 
     @Serializable
     data object VideoPage : Screen("videoPage")
