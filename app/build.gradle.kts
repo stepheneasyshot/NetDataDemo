@@ -42,6 +42,7 @@ android {
 
 dependencies {
 
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -89,4 +90,7 @@ dependencies {
 
     //datastore
     implementation (libs.androidx.datastore.preferences)
+
+    // mqtt
+    implementation(libs.eclipse.org.eclipse.paho.client.mqttv3)
 }

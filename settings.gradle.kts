@@ -27,4 +27,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "NetDataDemo"
 include(":app")
- 
