@@ -6,7 +6,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.reduce
 import kotlinx.coroutines.flow.sample
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
 val TAG = "FlowOne".apply {
@@ -37,9 +40,11 @@ fun startCollect() {
     CoroutineScope(Dispatchers.IO).launch {
         delay(3000L)
         Log.i(TAG, "startCollect")
-        flow.collectLatest {
+        flow.collect {
             Log.i(TAG, "FlowOne collect $it")
-            delay(3000)
+        }
+        flow.collect {
+            Log.i(TAG, "FlowOne collect twice $it")
         }
     }
 }
@@ -174,6 +179,71 @@ fun flatMapLatestTest() {
             }
         }.collect {
             Log.i(TAG, "flatMapLatestTest collect $it")
+        }
+    }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun zipTest() {
+    CoroutineScope(Dispatchers.IO).launch {
+        flowOf(1, 2, 3, 4, 5)
+            .zip(flowOf("a", "b", "c", "d")) { a, b ->
+                "$a+$b"
+            }
+            .collect {
+                Log.i(TAG, "zipTest collect $it")
+            }
+    }
+}
+
+fun zipTest2() {
+    CoroutineScope(Dispatchers.IO).launch {
+        val start = System.currentTimeMillis()
+        val flow1 = flow {
+            delay(3000)
+            emit("a")
+        }
+        val flow2 = flow {
+            delay(2000)
+            emit(1)
+        }
+        flow1.zip(flow2) { a, b ->
+            a + b
+        }.collect {
+            val end = System.currentTimeMillis()
+            Log.i(TAG, "Time cost: ${end - start}ms")
+        }
+    }
+}
+
+fun bufferTest() {
+    CoroutineScope(Dispatchers.IO).launch {
+        flow {
+            emit(1)
+            delay(1000)
+            emit(2)
+            delay(1000)
+            emit(3)
+        }.onEach {
+            Log.i(TAG, "bufferTest onEach $it")
+        }.buffer().collect {
+            delay(1000)
+            Log.i(TAG, "bufferTest collect $it")
+        }
+    }
+}
+
+fun conflateTest() {
+    CoroutineScope(Dispatchers.IO).launch {
+        flow {
+            repeat(7) {
+                delay(100)
+                emit(it)
+            }
+        }.conflate().collectLatest {
+            Log.i(TAG, "conflateTest collect start handle $it")
+            delay(210)
+            Log.i(TAG, "conflateTest collect end handle $it")
         }
     }
 }
