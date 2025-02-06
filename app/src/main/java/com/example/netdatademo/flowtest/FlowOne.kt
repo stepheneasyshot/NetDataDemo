@@ -1,6 +1,7 @@
 package com.example.netdatademo.flowtest
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -247,3 +248,13 @@ fun conflateTest() {
         }
     }
 }
+
+fun testLiveData() {
+    val liveData = MutableLiveData<Int>()
+    liveData.value = 1
+    liveData.value = 2
+    liveData.value = 3
+    liveData.value = 4
+    liveData.value = 5
+}
+
