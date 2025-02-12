@@ -5,14 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -25,24 +18,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,14 +45,10 @@ import com.example.netdatademo.ui.pages.PicturePage
 import com.example.netdatademo.ui.pages.PicturePageKtor
 import com.example.netdatademo.ui.pages.VideoPage
 import com.example.netdatademo.ui.theme.NetDataDemoTheme
-import com.example.netdatademo.ui.widget.TimePicker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Calendar
-import kotlin.math.cos
-import kotlin.math.sin
 
 class MainActivity : ComponentActivity() {
 
@@ -77,7 +63,7 @@ class MainActivity : ComponentActivity() {
 //                    content = { MainContentView(it, mainStateHolder) })
                 Column {
                     Spacer(modifier = Modifier.height(40.dp))
-                    AnimatedVisibilityDemo()
+                    ListItemAnimateDemo()
                 }
             }
         }
@@ -187,42 +173,29 @@ fun AnimatedVisibilityDemo() {
 
         val scope = rememberCoroutineScope()
 
-        val isShow = remember { mutableStateOf(true) }
-
-        val density = LocalDensity.current
-
-        AnimatedVisibility(visible = isShow.value,
-            enter = slideInVertically {
-                // Slide in from 40 dp from the top.
-                with(density) { -40.dp.roundToPx() }
-            } + expandVertically(
-                // Expand from the top.
-                expandFrom = Alignment.Top
-            ) + fadeIn(
-                // Fade in with the initial alpha of 0.3f.
-                initialAlpha = 0.3f
-            ),
-            exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
-            Text(
-                text = "How are you?",
-                color = Color.White,
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .background(Color.Red)
-                    .clip(RoundedCornerShape(10))
-                    .clickable {
-                        isShow.value = false // 点击后消失
-                        scope.launch {
-                            delay(2000)
-                            isShow.value = true // 2秒后重新出现
-                        }
-                    }
-                    .padding(20.dp)
-            )
-        }
+        var state by remember { mutableStateOf(false) }
 
         Text(
-            text = "I'm fine, thank you! And you?",
+            text = "How are you?",
+            color = Color.White,
+            modifier = Modifier
+                .animateContentSize()
+                .fillMaxWidth(1f)
+                .height(if (state) 160.dp else 80.dp)
+                .background(Color.Red)
+                .clip(RoundedCornerShape(10))
+                .clickable {
+                    state = true
+                    scope.launch {
+                        delay(2000)
+                        state = false
+                    }
+                }
+                .padding(20.dp)
+        )
+
+        Text(
+            text = "I am fine.",
             color = Color.White,
             modifier = Modifier
                 .fillMaxWidth(1f)
@@ -232,3 +205,36 @@ fun AnimatedVisibilityDemo() {
         )
     }
 }
+
+@Composable
+fun ListItemAnimateDemo() {
+    val listState = remember { mutableStateListOf<ListItem>() }
+
+    LaunchedEffect(Unit) {
+        repeat(10) {
+            listState.add(ListItem(it, "Item $it"))
+            delay(1000)
+        }
+        delay(1000)
+        listState.removeAt(5)
+    }
+
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(listState, key = { it.id }) { item ->
+            Text(
+                text = item.title,
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .animateItem()
+                    .background(Color.Blue)
+                    .clip(RoundedCornerShape(10))
+            )
+        }
+    }
+}
+
+data class ListItem(
+    val id: Int,
+    val title: String,
+)
