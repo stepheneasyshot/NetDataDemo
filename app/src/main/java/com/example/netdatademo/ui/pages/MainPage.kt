@@ -56,6 +56,13 @@ fun MainPage(onNavigateTo: (Screen) -> Unit) {
             ){
                 Text(text = "Github仓库列表（Ktor）", style = MaterialTheme.typography.bodyMedium)
             }
+
+            Button(
+                onClick = { onNavigateTo(Screen.MyServerPage) },
+                modifier = Modifier.padding(vertical = 10.dp)
+            ){
+                Text(text = "我的服务器测试（Ktor）", style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }

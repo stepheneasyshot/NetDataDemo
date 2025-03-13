@@ -52,6 +52,17 @@ class MainStateHolder(
     private val pitureState = MutableStateFlow(PitureState(PicAdress()))
     val pitureListStateFlow = pitureState.asStateFlow()
 
+    private val myServerResponse = MutableStateFlow("")
+    val myServerResponseStateFlow = myServerResponse.asStateFlow()
+
+    fun getMyServerResponse() {
+        CoroutineScope(Dispatchers.IO).launch {
+            myServerResponse.update {
+                ktorClient.getMuServerResponse("刘清晨","1234@qq.com")
+            }
+        }
+    }
+
     fun getMainPageArticleList(pageIndex: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             articleState.update {
