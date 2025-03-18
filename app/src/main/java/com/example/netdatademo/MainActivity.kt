@@ -151,9 +151,3 @@ sealed class Screen(val route: String) {
     @Serializable
     data object MyServerPage : Screen("myserverpage")
 }
-
-enum class BoxState {
-    Collapsed,
-    Expanded
-}
-

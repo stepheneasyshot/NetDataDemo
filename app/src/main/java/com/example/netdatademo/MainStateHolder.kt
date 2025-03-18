@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import com.example.netdatademo.helper.DataStoreHelper
 import com.example.netdatademo.ktor.KtorClient
-import com.example.netdatademo.mqtt.MqttClient
 import com.example.netdatademo.retrofit.PicAdress
 import com.example.netdatademo.retrofit.PicAdressItem
 import com.example.netdatademo.retrofit.RetroService
@@ -24,12 +23,7 @@ import kotlinx.coroutines.launch
 class MainStateHolder(
     private val retroService: RetroService,
     private val ktorClient: KtorClient,
-    private val mqttClient: MqttClient
 ) : ViewModel() {
-
-    init {
-        mqttClient.connect()
-    }
 
     companion object {
         const val TAG = "MainStateHolder"
@@ -56,9 +50,11 @@ class MainStateHolder(
     val myServerResponseStateFlow = myServerResponse.asStateFlow()
 
     fun getMyServerResponse() {
+        Log.d(TAG, "getMyServerResponse: ")
         CoroutineScope(Dispatchers.IO).launch {
+            val response = ktorClient.getMyServerResponse()
             myServerResponse.update {
-                ktorClient.getMuServerResponse("刘清晨", "1234@qq.com")
+                response
             }
         }
     }
