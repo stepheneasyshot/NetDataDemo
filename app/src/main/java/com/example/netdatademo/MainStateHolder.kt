@@ -58,7 +58,7 @@ class MainStateHolder(
     fun getMyServerResponse() {
         CoroutineScope(Dispatchers.IO).launch {
             myServerResponse.update {
-                ktorClient.getMuServerResponse("刘清晨","1234@qq.com")
+                ktorClient.getMuServerResponse("刘清晨", "1234@qq.com")
             }
         }
     }
@@ -203,7 +203,7 @@ class MainStateHolder(
         }
     }
 
-    fun getGithubRepos(userName: String){
+    fun getGithubRepos(userName: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val repos = ktorClient.getGithubRepos(userName)
             Log.d(TAG, "getMyGithubRepos: $repos")
