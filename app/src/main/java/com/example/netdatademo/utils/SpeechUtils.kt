@@ -39,4 +39,8 @@ object SpeechUtils {
             Log.d(TAG, "==========>TTS is not connected!<=========")
         }
     }
+
+    fun stop() {
+        textToSpeech.stop()
+    }
 }

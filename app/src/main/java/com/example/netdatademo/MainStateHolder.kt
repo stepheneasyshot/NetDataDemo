@@ -13,6 +13,7 @@ import com.example.netdatademo.uistate.CollectedArticleState
 import com.example.netdatademo.uistate.GithubReposState
 import com.example.netdatademo.uistate.PitureState
 import com.example.netdatademo.uistate.UserState
+import com.example.netdatademo.utils.SpeechUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +49,10 @@ class MainStateHolder(
 
     private val myServerResponse = MutableStateFlow("")
     val myServerResponseStateFlow = myServerResponse.asStateFlow()
+
+    init {
+        SpeechUtils.init()
+    }
 
     fun getMyServerResponse() {
         Log.d(TAG, "getMyServerResponse: ")
