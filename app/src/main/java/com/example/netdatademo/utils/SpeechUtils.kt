@@ -43,4 +43,8 @@ object SpeechUtils {
     fun stop() {
         textToSpeech.stop()
     }
+
+    fun shutdown(){
+        textToSpeech.shutdown()
+    }
 }

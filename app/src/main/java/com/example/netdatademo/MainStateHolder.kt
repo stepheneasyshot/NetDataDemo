@@ -221,5 +221,6 @@ class MainStateHolder(
     override fun onCleared() {
         super.onCleared()
         ktorClient.release()
+        SpeechUtils.shutdown()
     }
 }
