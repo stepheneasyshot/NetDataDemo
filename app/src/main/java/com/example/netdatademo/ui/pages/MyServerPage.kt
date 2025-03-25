@@ -1,5 +1,6 @@
 package com.example.netdatademo.ui.pages
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -8,13 +9,18 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.netdatademo.MainStateHolder
-import com.example.netdatademo.utils.SpeechUtils
+import java.util.Locale
 
 @Composable
 fun MyServerPage(
     mainStateHolder: MainStateHolder,
-    onBackStack: () -> Unit
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+    onBackStack: () -> Unit,
 ) {
     BasePage("个人服务器测试", onCickBack = onBackStack) {
 
@@ -26,7 +32,7 @@ fun MyServerPage(
 
         LaunchedEffect(myResponse) {
             if (myResponse.isNotEmpty()) {
-                SpeechUtils.speak(myResponse)
+                mainStateHolder.speak(myResponse, Locale.US)
             }
         }
 
@@ -37,9 +43,19 @@ fun MyServerPage(
             Text(text = myResponse)
         }
 
-        DisposableEffect(Unit) {
+        DisposableEffect(lifecycleOwner) {
+            Log.i("MyServerPage", "MyServerPage ${lifecycleOwner.lifecycle.currentState}")
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_STOP) {
+                    // 当 Activity 退到后台时，Lifecycle 会触发 ON_STOP 事件
+                    mainStateHolder.stopSpeech()
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+
             onDispose {
-                SpeechUtils.stop()
+                mainStateHolder.stopSpeech()
+                lifecycleOwner.lifecycle.removeObserver(observer)
             }
         }
     }

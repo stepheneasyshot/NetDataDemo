@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -39,7 +40,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     content = { innerPadding ->
-                        MainContentView(innerPadding, mainStateHolder)
+                        MainContentView(innerPadding, mainStateHolder, this)
                     })
             }
         }
@@ -47,7 +48,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHolder) {
+fun MainContentView(
+    paddingValues: PaddingValues,
+    mainStateHolder: MainStateHolder,
+    lifecycleOwner: LifecycleOwner
+) {
     Log.d("MainContentView", "paddingValues: $paddingValues")
     Box(
         modifier = Modifier
@@ -122,7 +127,7 @@ fun MainContentView(paddingValues: PaddingValues, mainStateHolder: MainStateHold
                 }
             }
             composable<Screen.MyServerPage> {
-                MyServerPage(mainStateHolder) {
+                MyServerPage(mainStateHolder, lifecycleOwner = lifecycleOwner) {
                     navController.popBackStack()
                 }
             }

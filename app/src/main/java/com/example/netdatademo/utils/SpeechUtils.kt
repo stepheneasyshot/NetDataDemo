@@ -2,13 +2,14 @@ package com.example.netdatademo.utils
 
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import com.example.netdatademo.MainStateHolder.Companion.TAG
 import com.example.netdatademo.appContext
 import java.util.Locale
 
 object SpeechUtils {
 
     private lateinit var textToSpeech: TextToSpeech
+
+    private const val TAG = "SpeechUtils"
 
     private const val TEST_IDENTIFIER = "test"
 
@@ -44,7 +45,7 @@ object SpeechUtils {
         textToSpeech.stop()
     }
 
-    fun shutdown(){
+    fun shutdown() {
         textToSpeech.shutdown()
     }
 }

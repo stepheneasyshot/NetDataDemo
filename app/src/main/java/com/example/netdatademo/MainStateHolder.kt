@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MainStateHolder(
     private val retroService: RetroService,
@@ -51,6 +52,7 @@ class MainStateHolder(
     val myServerResponseStateFlow = myServerResponse.asStateFlow()
 
     init {
+        Log.d(TAG, "============>init<=============")
         SpeechUtils.init()
     }
 
@@ -218,8 +220,17 @@ class MainStateHolder(
         }
     }
 
+    fun speak(text: String, locale: Locale) {
+        SpeechUtils.speak(text, locale)
+    }
+
+    fun stopSpeech(){
+        SpeechUtils.stop()
+    }
+
     override fun onCleared() {
         super.onCleared()
+        Log.d(TAG, "=============>onCleared<==============")
         ktorClient.release()
         SpeechUtils.shutdown()
     }
