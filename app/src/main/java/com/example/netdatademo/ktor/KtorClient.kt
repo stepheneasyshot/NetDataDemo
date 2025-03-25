@@ -35,6 +35,10 @@ class KtorClient {
             .body<List<PicKtorItem>>()
     }
 
+    suspend fun getOneCatImage() = withContext(Dispatchers.IO) {
+        client.get("https://api.thecatapi.com/v1/images/search").body<List<PicKtorItem>>()
+    }
+
     suspend fun getGithubRepos(userName: String) = withContext(Dispatchers.IO) {
         client.get("https://api.github.com/users/${userName}/repos")
             .body<List<GithubRepoItem>>()

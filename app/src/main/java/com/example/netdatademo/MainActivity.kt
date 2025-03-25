@@ -38,7 +38,9 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    content = { MainContentView(it, mainStateHolder) })
+                    content = { innerPadding ->
+                        MainContentView(innerPadding, mainStateHolder)
+                    })
             }
         }
     }

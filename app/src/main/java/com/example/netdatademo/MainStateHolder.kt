@@ -217,5 +217,4 @@ class MainStateHolder(
         super.onCleared()
         ktorClient.release()
     }
-
 }
