@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.netdatademo.ui.pages.ArticlePage
+import com.example.netdatademo.ui.pages.FileDownloadPage
 import com.example.netdatademo.ui.pages.GithubRepoPage
 import com.example.netdatademo.ui.pages.MainPage
 import com.example.netdatademo.ui.pages.MyServerPage
@@ -30,13 +32,31 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
+    // 权限请求
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.all { it.value }) {
+            Log.i("MainActivity", "权限请求成功")
+        } else {
+            // 处理权限被拒绝的情况
+        }
+    }
+
+    private fun requestPermissions() {
+        val permissions = arrayOf(
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        requestPermissionLauncher.launch(permissions)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             NetDataDemoTheme {
                 val mainStateHolder: MainStateHolder by viewModel()
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     content = { innerPadding ->
@@ -44,6 +64,9 @@ class MainActivity : ComponentActivity() {
                     })
             }
         }
+
+        // 检查并请求权限
+        requestPermissions()
     }
 }
 
@@ -81,6 +104,10 @@ fun MainContentView(
 
                         is Screen.VideoPage -> {
                             navController.navigate(Screen.VideoPage)
+                        }
+
+                        is Screen.FileDownloadPage -> {
+                            navController.navigate(Screen.FileDownloadPage)
                         }
 
                         is Screen.GithubReposPage -> {
@@ -126,6 +153,11 @@ fun MainContentView(
                     navController.popBackStack()
                 }
             }
+            composable<Screen.FileDownloadPage> {
+                FileDownloadPage(mainStateHolder) {
+                    navController.popBackStack()
+                }
+            }
             composable<Screen.MyServerPage> {
                 MyServerPage(mainStateHolder, lifecycleOwner = lifecycleOwner) {
                     navController.popBackStack()
@@ -157,4 +189,7 @@ sealed class Screen(val route: String) {
 
     @Serializable
     data object MyServerPage : Screen("myserverpage")
+
+    @Serializable
+    data object FileDownloadPage : Screen("fileDownloadPage")
 }

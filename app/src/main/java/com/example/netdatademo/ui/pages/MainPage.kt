@@ -63,6 +63,13 @@ fun MainPage(onNavigateTo: (Screen) -> Unit) {
             ){
                 Text(text = "我的服务器测试（Ktor）", style = MaterialTheme.typography.bodyMedium)
             }
+
+            Button(
+                onClick = { onNavigateTo(Screen.FileDownloadPage) },
+                modifier = Modifier.padding(vertical = 10.dp)
+            ){
+                Text(text = "文件下载（Ktor）", style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }

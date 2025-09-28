@@ -1,9 +1,15 @@
 package com.example.netdatademo
 
+import android.content.ContentValues
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.netdatademo.helper.DataStoreHelper
+import com.example.netdatademo.ktor.FileDownloadManager
+import com.example.netdatademo.ktor.FileDownloadManager.DownloadProgress
 import com.example.netdatademo.ktor.KtorClient
 import com.example.netdatademo.retrofit.PicAdress
 import com.example.netdatademo.retrofit.PicAdressItem
@@ -14,17 +20,20 @@ import com.example.netdatademo.uistate.GithubReposState
 import com.example.netdatademo.uistate.PitureState
 import com.example.netdatademo.uistate.UserState
 import com.example.netdatademo.utils.SpeechUtils
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.util.Locale
 
 class MainStateHolder(
     private val retroService: RetroService,
     private val ktorClient: KtorClient,
+    private val fileDownloadManager: FileDownloadManager
 ) : ViewModel() {
 
     companion object {
@@ -220,11 +229,56 @@ class MainStateHolder(
         }
     }
 
+    val downloadProgressState = MutableStateFlow(DownloadProgress(0, 0))
+    fun downloadDebugManager() {
+        Log.d(TAG, "downloadDebugManager: 开始下载")
+        val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+            Log.e(TAG, "downloadDebugManager: 下载异常", exception)
+        }
+
+        viewModelScope.launch(exceptionHandler) {
+            val url = "https://github.com/Genymobile/scrcpy/releases/download/v3.3.3/scrcpy-macos-aarch64-v3.3.3.tar.gz"
+            val fileName = url.substringAfterLast("/")
+
+            // 1. 定义文件的元数据
+            val contentValues = ContentValues().apply {
+                // 设置文件名
+                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+
+                // 设置 MIME 类型 (例如：APK)
+                // MediaStore.Downloads.MIME_TYPE: 如果是通用文件，可以使用 'application/octet-stream'
+                put(MediaStore.Downloads.MIME_TYPE, "application/octet-stream")
+
+                // 允许文件在 Downloads 目录下可见 (Android 10+)
+                // IS_PENDING 设为 1 表示文件正在写入，其他应用暂时看不到或访问不到
+                put(MediaStore.Downloads.IS_PENDING, 1)
+            }
+
+            val resolver = appContext.contentResolver
+            val contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
+
+            val uri: Uri = resolver.insert(contentUri, contentValues)
+                ?: throw IOException("Failed to create new MediaStore entry")
+            fileDownloadManager.downloadFileWithProgress(
+                url,
+                uri,
+                resolver,
+            ).collect { progress ->
+                Log.d(TAG, "downloadDebugManager: ${progress.progress}")
+                downloadProgressState.value = progress
+            }
+            // 5. 下载完成，清除 IS_PENDING 标记
+            contentValues.clear()
+            contentValues.put(MediaStore.Downloads.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+        }
+    }
+
     fun speak(text: String, locale: Locale) {
         SpeechUtils.speak(text, locale)
     }
 
-    fun stopSpeech(){
+    fun stopSpeech() {
         SpeechUtils.stop()
     }
 
