@@ -70,6 +70,13 @@ fun MainPage(onNavigateTo: (Screen) -> Unit) {
             ){
                 Text(text = "文件下载（Ktor）", style = MaterialTheme.typography.bodyMedium)
             }
+
+            Button(
+                onClick = { onNavigateTo(Screen.WifiSearchPage) },
+                modifier = Modifier.padding(vertical = 10.dp)
+            ){
+                Text(text = "WiFi搜索", style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }

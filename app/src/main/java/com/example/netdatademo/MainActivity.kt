@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import com.example.netdatademo.ui.pages.MyServerPage
 import com.example.netdatademo.ui.pages.PicturePage
 import com.example.netdatademo.ui.pages.PicturePageKtor
 import com.example.netdatademo.ui.pages.VideoPage
+import com.example.netdatademo.ui.pages.WifiSearchPage
 import com.example.netdatademo.ui.theme.NetDataDemoTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,8 +47,9 @@ class MainActivity : ComponentActivity() {
 
     private fun requestPermissions() {
         val permissions = arrayOf(
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.CHANGE_NETWORK_STATE,
+            android.Manifest.permission.WRITE_SETTINGS
         )
         requestPermissionLauncher.launch(permissions)
     }
@@ -110,6 +113,10 @@ fun MainContentView(
                             navController.navigate(Screen.FileDownloadPage)
                         }
 
+                        is Screen.WifiSearchPage -> {
+                            navController.navigate(Screen.WifiSearchPage)
+                        }
+
                         is Screen.GithubReposPage -> {
                             navController.navigate(Screen.GithubReposPage)
                         }
@@ -153,6 +160,11 @@ fun MainContentView(
                     navController.popBackStack()
                 }
             }
+            composable<Screen.WifiSearchPage> {
+                WifiSearchPage(mainStateHolder) {
+                    navController.popBackStack()
+                }
+            }
             composable<Screen.FileDownloadPage> {
                 FileDownloadPage(mainStateHolder) {
                     navController.popBackStack()
@@ -192,4 +204,7 @@ sealed class Screen(val route: String) {
 
     @Serializable
     data object FileDownloadPage : Screen("fileDownloadPage")
+
+    @Serializable
+    data object WifiSearchPage : Screen("wifiSearchPage")
 }

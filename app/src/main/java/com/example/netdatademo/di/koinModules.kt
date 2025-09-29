@@ -1,6 +1,7 @@
 package com.example.netdatademo.di
 
 import com.example.netdatademo.MainStateHolder
+import com.example.netdatademo.helper.WifiConnectHelper
 import com.example.netdatademo.ktor.FileDownloadManager
 import com.example.netdatademo.ktor.KtorClient
 import com.example.netdatademo.retrofit.RetroService
@@ -12,11 +13,13 @@ val koinModule = module {
 
     single { KtorClient() }
 
-    viewModel { MainStateHolder(get(), get(), get()) }
+    viewModel { MainStateHolder(get(), get(),get(), get()) }
 
     viewModelOf(::MainStateHolder)
 
     factory { RetroService() }
+
+    factory { WifiConnectHelper() }
 
     factory { FileDownloadManager(get()) }
 }

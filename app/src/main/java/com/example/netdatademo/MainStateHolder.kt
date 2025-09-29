@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.netdatademo.helper.DataStoreHelper
+import com.example.netdatademo.helper.WifiConnectHelper
 import com.example.netdatademo.ktor.FileDownloadManager
 import com.example.netdatademo.ktor.FileDownloadManager.DownloadProgress
 import com.example.netdatademo.ktor.KtorClient
@@ -30,10 +31,12 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
 
+
 class MainStateHolder(
     private val retroService: RetroService,
     private val ktorClient: KtorClient,
-    private val fileDownloadManager: FileDownloadManager
+    private val fileDownloadManager: FileDownloadManager,
+    private val wifiConnectHelper: WifiConnectHelper,
 ) : ViewModel() {
 
     companion object {
@@ -59,6 +62,9 @@ class MainStateHolder(
 
     private val myServerResponse = MutableStateFlow("")
     val myServerResponseStateFlow = myServerResponse.asStateFlow()
+
+    val wifiState = wifiConnectHelper.wifiSwitchState.asStateFlow()
+    val wifiDeviceFoundState = wifiConnectHelper.deviceFoundState.asStateFlow()
 
     init {
         Log.d(TAG, "============>init<=============")
@@ -237,7 +243,8 @@ class MainStateHolder(
         }
 
         viewModelScope.launch(exceptionHandler) {
-            val url = "https://github.com/Genymobile/scrcpy/releases/download/v3.3.3/scrcpy-macos-aarch64-v3.3.3.tar.gz"
+            val url =
+                "https://github.com/Genymobile/scrcpy/releases/download/v3.3.3/scrcpy-macos-aarch64-v3.3.3.tar.gz"
             val fileName = url.substringAfterLast("/")
 
             // 1. 定义文件的元数据
@@ -280,6 +287,28 @@ class MainStateHolder(
 
     fun stopSpeech() {
         SpeechUtils.stop()
+    }
+
+    fun initWifiListen() {
+        wifiConnectHelper.initWifiListen()
+    }
+
+    fun stopWifiListen() {
+        wifiConnectHelper.releaseWifiListen()
+    }
+
+    /**
+     * 开始扫描WIFI
+     */
+    fun startScanWifi() {
+        wifiConnectHelper.startScanWifi()
+    }
+
+    /**
+     * 连接到指定WIFI
+     */
+    fun connectWifi() {
+        wifiConnectHelper.connectWifi()
     }
 
     override fun onCleared() {
